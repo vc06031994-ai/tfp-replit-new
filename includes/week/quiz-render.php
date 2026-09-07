@@ -66,8 +66,11 @@ function tfp_dashboard_render_week_quiz_tab($week, $user_id)
     $passed      = $has_result ? !empty($result['passed']) : $quiz_done;
     $score       = $has_result ? (int) $result['score'] : 0;
     $correct_n   = $has_result ? (int) $result['correct'] : 0;
-    $retake_ok   = $has_result && !$passed && tfp_week_can_retake_quiz($user_id, $lesson_id);
-    $graded_at   = $has_result && !empty($result['graded_at']) ? $result['graded_at'] : '';
+    $retake_ok     = $has_result && !$passed && tfp_week_can_retake_quiz($user_id, $lesson_id);
+    // Test unlocks after a pass, or after the final allowed attempt even if
+    // the student did not pass the quiz.
+    $test_unlocked = $quiz_done || $passed;
+    $graded_at     = $has_result && !empty($result['graded_at']) ? $result['graded_at'] : '';
 
     // Initial state for the JS engine.
     if ($has_result || $quiz_done) {
@@ -188,13 +191,13 @@ function tfp_dashboard_render_week_quiz_tab($week, $user_id)
                             <?php esc_html_e('Passed - Next section unlocked', 'tfp-dashboard'); ?>
                         <?php else : ?>
                             <span class="tfp-quiz-badge tfp-quiz-badge--failed" aria-hidden="true">&#10005;</span>
-                            <?php echo $retake_ok ? esc_html__('Quiz Failed - Review and Retake Quiz', 'tfp-dashboard') : esc_html__('Quiz Failed - Review and Retake Quiz', 'tfp-dashboard'); ?>
+                            <?php echo $test_unlocked ? esc_html__('Quiz Failed - Next section unlocked', 'tfp-dashboard') : esc_html__('Quiz Failed - Review and Retake Quiz', 'tfp-dashboard'); ?>
                         <?php endif; ?>
                     </p>
 
                     <div class="tfp-quiz-result__actions">
                         <button type="button" class="tfp-dash-btn tfp-dash-btn--primary tfp-quiz-review-answers-btn"><?php esc_html_e('Review Answers', 'tfp-dashboard'); ?></button>
-                        <?php if ($passed) : ?>
+                        <?php if ($test_unlocked) : ?>
                             <a href="<?php echo esc_url($test_url); ?>" class="tfp-dash-btn tfp-reded-btn"><?php esc_html_e('Continue to Test', 'tfp-dashboard'); ?></a>
                         <?php elseif ($retake_ok) : ?>
                             <button type="button" class="tfp-dash-btn tfp-reded-btn tfp-quiz-retake-btn"><?php esc_html_e('Retake Quiz', 'tfp-dashboard'); ?></button>
