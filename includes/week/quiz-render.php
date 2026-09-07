@@ -63,7 +63,7 @@ function tfp_dashboard_render_week_quiz_tab($week, $user_id)
     $total         = count($questions);
 
     $has_result  = is_array($result) && isset($result['score']);
-    $passed      = $quiz_done || ($has_result && !empty($result['passed']));
+    $passed      = $has_result ? !empty($result['passed']) : $quiz_done;
     $score       = $has_result ? (int) $result['score'] : 0;
     $correct_n   = $has_result ? (int) $result['correct'] : 0;
     $retake_ok   = $has_result && !$passed && tfp_week_can_retake_quiz($user_id, $lesson_id);
