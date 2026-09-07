@@ -150,8 +150,10 @@ add_action('wp_ajax_tfp_week_reset_quiz', function () {
     $lesson_id = isset($_POST['lesson_id']) ? absint($_POST['lesson_id']) : 0;
     $user_id   = tfp_quiz_check_request($lesson_id);
 
-    $progress = tfp_ld_get_week_progress($user_id, $lesson_id);
-    if (!empty($progress['quiz'])) {
+    // The stored graded result is authoritative. Do not let stale progress
+    // metadata hide the retake option after a failed attempt.
+    $existing = tfp_week_get_quiz_result($user_id, $lesson_id);
+    if ($existing && !empty($existing['passed'])) {
         wp_send_json(['success' => false, 'message' => __('You have already passed this quiz.', 'tfp-dashboard')], 400);
     }
 
