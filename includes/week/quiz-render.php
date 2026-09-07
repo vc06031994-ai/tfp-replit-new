@@ -126,9 +126,9 @@ function tfp_dashboard_render_week_quiz_tab($week, $user_id)
                 $is_last      = ($index === $total - 1);
                 ?>
                 <div class="tfp-quiz-question" data-index="<?php echo esc_attr($index); ?>" data-question-id="<?php echo esc_attr($qid); ?>" <?php echo $is_first ? '' : 'hidden'; ?>>
-                    <div class="tfp-quiz-counter"><?php printf(esc_html__('Question %1$d of %2$d', 'tfp-dashboard'), $index + 1, $total); ?></div>
+                    <h3 class="tfp-quiz-counter"><?php printf(esc_html__('Question %1$d of %2$d', 'tfp-dashboard'), $index + 1, $total); ?></h3>
 
-                    <div class="tfp-quiz-q">
+                    <div class="tfp-quiz-q tfp-quiz-details__title">
                         <?php echo esc_html(($index + 1) . '. ' . $q['prompt']); ?>
                     </div>
 
@@ -168,13 +168,13 @@ function tfp_dashboard_render_week_quiz_tab($week, $user_id)
                 <?php endif; ?>
 
                 <div class="tfp-quiz-card tfp-quiz-result tfp-quiz-result--<?php echo $passed ? 'passed' : 'failed'; ?>">
-                    <h3 class="tfp-quiz-title"><?php esc_html_e('Quiz Results:', 'tfp-dashboard'); ?></h3>
+                    <h2 class="tfp-quiz-title"><?php esc_html_e('Quiz Results:', 'tfp-dashboard'); ?></h2>
 
-                    <p class="tfp-quiz-result__sub">
+                    <p class="tfp-quiz-result__sub tfp-quiz-details__title">
                         <?php echo $passed ? esc_html__("You've completed the quiz!", 'tfp-dashboard') : esc_html__('Quiz Failed', 'tfp-dashboard'); ?>
                     </p>
 
-                    <p class="tfp-quiz-result__here"><?php esc_html_e("Here's how you did:", 'tfp-dashboard'); ?></p>
+                    <p class="tfp-quiz-result__here tfp-quiz-details__title"><?php esc_html_e("Here's how you did:", 'tfp-dashboard'); ?></p>
 
                     <ul class="tfp-quiz-details__list tfp-quiz-result__list">
                         <li><?php printf(esc_html__('Total Questions: %d', 'tfp-dashboard'), $total); ?></li>
@@ -188,7 +188,7 @@ function tfp_dashboard_render_week_quiz_tab($week, $user_id)
                             <?php esc_html_e('Passed - Next section unlocked', 'tfp-dashboard'); ?>
                         <?php else : ?>
                             <span class="tfp-quiz-badge tfp-quiz-badge--failed" aria-hidden="true">&#10005;</span>
-                            <?php echo $retake_ok ? esc_html__('Quiz Failed - Review and Retake Quiz', 'tfp-dashboard') : esc_html__('Quiz Failed', 'tfp-dashboard'); ?>
+                            <?php echo $retake_ok ? esc_html__('Quiz Failed - Review and Retake Quiz', 'tfp-dashboard') : esc_html__('Quiz Failed - Review and Retake Quiz', 'tfp-dashboard'); ?>
                         <?php endif; ?>
                     </p>
 
@@ -207,7 +207,7 @@ function tfp_dashboard_render_week_quiz_tab($week, $user_id)
         <!-- ============================= STATE 4: REVIEW ============================= -->
         <div class="tfp-quiz-panel tfp-quiz-state-review" hidden>
             <?php if ($has_result && !empty($result['results'])) : ?>
-                <h3 class="tfp-quiz-title"><?php esc_html_e('Review Answers:', 'tfp-dashboard'); ?></h3>
+                <h2 class="tfp-quiz-title"><?php esc_html_e('Review Answers:', 'tfp-dashboard'); ?></h2>
 
                 <div class="tfp-quiz-card tfp-quiz-review-list">
                     <?php foreach ($result['results'] as $index => $r) :
@@ -236,7 +236,7 @@ function tfp_dashboard_render_week_quiz_tab($week, $user_id)
 
                             <?php if (!empty($r['explanation'])) : ?>
                                 <div class="tfp-quiz-review-explanation">
-                                    <strong><?php esc_html_e('Explanation:', 'tfp-dashboard'); ?></strong>
+                                    <h5><?php esc_html_e('Explanation:', 'tfp-dashboard'); ?></h5>
                                     <p><?php echo esc_html($r['explanation']); ?></p>
                                 </div>
                             <?php endif; ?>
