@@ -69,7 +69,8 @@ function tfp_dashboard_render_week_quiz_tab($week, $user_id)
     $retake_ok     = $has_result && !$passed && tfp_week_can_retake_quiz($user_id, $lesson_id);
     // Test unlocks after a pass, or after the final allowed attempt even if
     // the student did not pass the quiz.
-    $test_unlocked = $quiz_done || $passed;
+    // Any submitted result unlocks the Test step, whether passed or failed.
+    $test_unlocked = $has_result || $quiz_done;
     $graded_at     = $has_result && !empty($result['graded_at']) ? $result['graded_at'] : '';
 
     // Initial state for the JS engine.
@@ -199,7 +200,8 @@ function tfp_dashboard_render_week_quiz_tab($week, $user_id)
                         <button type="button" class="tfp-dash-btn tfp-dash-btn--primary tfp-quiz-review-answers-btn"><?php esc_html_e('Review Answers', 'tfp-dashboard'); ?></button>
                         <?php if ($test_unlocked) : ?>
                             <a href="<?php echo esc_url($test_url); ?>" class="tfp-dash-btn tfp-reded-btn"><?php esc_html_e('Continue to Test', 'tfp-dashboard'); ?></a>
-                        <?php elseif ($retake_ok) : ?>
+                        <?php endif; ?>
+                        <?php if ($retake_ok) : ?>
                             <button type="button" class="tfp-dash-btn tfp-reded-btn tfp-quiz-retake-btn"><?php esc_html_e('Retake Quiz', 'tfp-dashboard'); ?></button>
                         <?php endif; ?>
                     </div>
