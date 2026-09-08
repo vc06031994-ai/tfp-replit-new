@@ -23,6 +23,13 @@ add_action('init', function () {
         'tfp_week_meeting_date'       => 'sanitize_text_field',
         'tfp_week_meeting_time'       => 'sanitize_text_field',
         'tfp_week_facilitator_name'   => 'sanitize_text_field',
+        'tfp_week_meeting_description' => 'wp_kses_post',
+        'tfp_week_meeting_discord_url' => 'esc_url_raw',
+        'tfp_week_meeting_exercise_title' => 'sanitize_text_field',
+        'tfp_week_meeting_exercise_format' => 'sanitize_text_field',
+        'tfp_week_meeting_exercise_description' => 'wp_kses_post',
+        'tfp_week_meeting_exercise_purpose' => 'wp_kses_post',
+        'tfp_week_meeting_facilitator_notes' => 'wp_kses_post',
     ];
 
     foreach ($fields as $key => $sanitizer) {
