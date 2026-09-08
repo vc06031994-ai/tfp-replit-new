@@ -487,11 +487,7 @@ function tfp_dashboard_render_week_homework_tab($week, $user_id)
                     <?php endforeach; ?>
                 </div>
                 
-                <?php if (!$is_submitted) : ?>
-                <div class="tfp-week__homework-actions" style="margin-top: 32px; display: flex; justify-content: flex-end;">
-                    <button class="tfp-dash-btn tfp-reded-btn tfp-homework-submit-btn"><?php esc_html_e('Submit Homework for Review', 'tfp-dashboard'); ?></button>
-                </div>
-                <?php endif; ?>
+
             </div>
 
         </div>
