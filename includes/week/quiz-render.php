@@ -261,8 +261,11 @@ function tfp_dashboard_render_week_quiz_tab($week, $user_id)
 
                                 <?php if (!$is_last) : ?>
                                     <button type="button" class="tfp-dash-btn tfp-reded-btn tfp-quiz-review-next" data-target="<?php echo esc_attr($result['results'][$index + 1]['id']); ?>"><?php esc_html_e('Next Answer', 'tfp-dashboard'); ?></button>
-                                <?php elseif ($retake_ok) : ?>
-                                    <button type="button" class="tfp-dash-btn tfp-reded-btn tfp-quiz-retake-btn"><?php esc_html_e('Retake Quiz', 'tfp-dashboard'); ?></button>
+                                <?php else : ?>
+                                    <button type="button" class="tfp-dash-btn tfp-reded-btn tfp-quiz-review-result-btn"><?php esc_html_e('Show Result', 'tfp-dashboard'); ?></button>
+                                    <?php if ($retake_ok) : ?>
+                                        <button type="button" class="tfp-dash-btn tfp-reded-btn tfp-quiz-retake-btn"><?php esc_html_e('Retake Quiz', 'tfp-dashboard'); ?></button>
+                                    <?php endif; ?>
                                 <?php endif; ?>
                             </div>
                         </div>
