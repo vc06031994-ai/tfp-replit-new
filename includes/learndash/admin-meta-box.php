@@ -117,6 +117,55 @@ add_action('init', function () {
             return current_user_can('edit_posts');
         },
     ]);
+
+    // Test Questions and pass percentage (JSON / 1-100).
+    // Test Questions (JSON) — multiple-choice, each with a REQUIRED correct
+    // answer (`correct_index`). Same safe-sanitize contract as homework:
+    // invalid JSON is kept, never silently wiped.
+    register_post_meta('sfwd-lessons', 'tfp_week_test_questions', [
+        'show_in_rest'      => true,
+        'single'            => true,
+        'type'              => 'string',
+        'sanitize_callback' => function ($value) {
+            if (empty($value)) {
+                return ''; // Intentional clear (e.g. "no test").
+            }
+
+            if (is_string($value)) {
+                $decoded = json_decode($value, true);
+                if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+                    return wp_json_encode($decoded);
+                }
+            }
+
+            return is_string($value) ? sanitize_textarea_field($value) : '';
+        },
+        'auth_callback'     => function () {
+            return current_user_can('edit_posts');
+        },
+    ]);
+
+
+    // Test pass percentage (1-100). Empty = use the 70% default (test-helpers.php).
+    // Stored as a string so clearing the field removes the meta cleanly.
+    register_post_meta('sfwd-lessons', 'tfp_week_test_pass_percentage', [
+        'show_in_rest'      => true,
+        'single'            => true,
+        'type'              => 'string',
+        'sanitize_callback' => function ($value) {
+            if ($value === '' || $value === null) {
+                return '';
+            }
+            $v = absint($value);
+            if ($v < 1) {
+                return '';
+            }
+            return (string) min(100, $v);
+        },
+        'auth_callback'     => function () {
+            return current_user_can('edit_posts');
+        },
+    ]);
 }, 20);
 
 add_action('enqueue_block_editor_assets', function () {
@@ -140,6 +189,14 @@ add_action('enqueue_block_editor_assets', function () {
     wp_enqueue_script(
         'tfp-week-quiz-panel',
         TFP_DASH_URL . 'assets/js/admin-week-quiz-panel.js',
+        ['wp-plugins', 'wp-edit-post', 'wp-components', 'wp-data', 'wp-element', 'wp-i18n', 'wp-compose'],
+        TFP_DASH_VERSION,
+        true
+    );
+
+    wp_enqueue_script(
+        'tfp-week-test-panel',
+        TFP_DASH_URL . 'assets/js/admin-week-test-panel.js',
         ['wp-plugins', 'wp-edit-post', 'wp-components', 'wp-data', 'wp-element', 'wp-i18n', 'wp-compose'],
         TFP_DASH_VERSION,
         true
