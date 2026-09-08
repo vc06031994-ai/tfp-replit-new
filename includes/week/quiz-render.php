@@ -63,6 +63,14 @@ function tfp_dashboard_render_week_quiz_tab($week, $user_id)
     $total         = count($questions);
 
     $has_result  = is_array($result) && isset($result['score']);
+
+    // Backfill the gated step for results created before the unconditional
+    // pass/fail unlock rule, so existing students can continue to Test too.
+    if ($has_result && !$quiz_done) {
+        tfp_ld_mark_step_complete($user_id, $lesson_id, 'quiz');
+        $quiz_done = true;
+    }
+
     $passed      = $has_result ? !empty($result['passed']) : $quiz_done;
     $score       = $has_result ? (int) $result['score'] : 0;
     $correct_n   = $has_result ? (int) $result['correct'] : 0;
