@@ -58,7 +58,7 @@ function tfp_dashboard_render_week_quiz_tab($week, $user_id)
 
     $answers       = tfp_week_get_quiz_answers($user_id, $lesson_id);
     $result        = tfp_week_get_quiz_result($user_id, $lesson_id);
-    $quiz_done     = !empty($progress['quiz']);
+    $quiz_step_complete = !empty($progress['quiz']);
     $pass_pct      = tfp_week_get_quiz_pass_percentage($lesson_id);
     $total         = count($questions);
 
@@ -66,23 +66,23 @@ function tfp_dashboard_render_week_quiz_tab($week, $user_id)
 
     // Backfill the gated step for results created before the unconditional
     // pass/fail unlock rule, so existing students can continue to Test too.
-    if ($has_result && !$quiz_done) {
+    if ($has_result && !$quiz_step_complete) {
         tfp_ld_mark_step_complete($user_id, $lesson_id, 'quiz');
-        $quiz_done = true;
+        $quiz_step_complete = true;
     }
 
-    $passed      = $has_result ? !empty($result['passed']) : $quiz_done;
+    $passed      = $has_result ? !empty($result['passed']) : false;
     $score       = $has_result ? (int) $result['score'] : 0;
     $correct_n   = $has_result ? (int) $result['correct'] : 0;
     $retake_ok     = $has_result && !$passed && tfp_week_can_retake_quiz($user_id, $lesson_id);
     // Test unlocks after a pass, or after the final allowed attempt even if
     // the student did not pass the quiz.
     // Any submitted result unlocks the Test step, whether passed or failed.
-    $test_unlocked = $has_result || $quiz_done;
+    $test_unlocked = $has_result || $quiz_step_complete;
     $graded_at     = $has_result && !empty($result['graded_at']) ? $result['graded_at'] : '';
 
     // Initial state for the JS engine.
-    if ($has_result || $quiz_done) {
+    if ($has_result) {
         $initial_state = 'state-result';
     } else {
         // Always show the screenshot-style entry screen when the quiz page is
@@ -172,7 +172,7 @@ function tfp_dashboard_render_week_quiz_tab($week, $user_id)
 
         <!-- ============================= STATE 3: RESULT ============================= -->
         <div class="tfp-quiz-panel tfp-quiz-state-result" <?php echo ($initial_state === 'state-result') ? '' : 'hidden'; ?>>
-            <?php if ($has_result || $quiz_done) : ?>
+            <?php if ($has_result) : ?>
                 <?php if ($passed && $graded_at) : ?>
                     <div class="tfp-quiz-result__date">
                         <?php printf(esc_html__('Date completed: %s', 'tfp-dashboard'), esc_html(date_i18n(get_option('date_format'), strtotime($graded_at)))); ?>
@@ -206,9 +206,7 @@ function tfp_dashboard_render_week_quiz_tab($week, $user_id)
 
                     <div class="tfp-quiz-result__actions">
                         <button type="button" class="tfp-dash-btn tfp-dash-btn--primary tfp-quiz-review-answers-btn"><?php esc_html_e('Review Answers', 'tfp-dashboard'); ?></button>
-                        <?php if ($test_unlocked) : ?>
-                            <a href="<?php echo esc_url($test_url); ?>" class="tfp-dash-btn tfp-reded-btn"><?php esc_html_e('Continue to Test', 'tfp-dashboard'); ?></a>
-                        <?php endif; ?>
+                        <a href="<?php echo esc_url($test_url); ?>" class="tfp-dash-btn tfp-reded-btn<?php echo $test_unlocked ? '' : ' is-disabled'; ?>" aria-disabled="<?php echo $test_unlocked ? 'false' : 'true'; ?>"<?php echo $test_unlocked ? '' : ' tabindex="-1"'; ?>><?php esc_html_e('Continue to Test', 'tfp-dashboard'); ?></a>
                         <?php if ($retake_ok) : ?>
                             <button type="button" class="tfp-dash-btn tfp-reded-btn tfp-quiz-retake-btn"><?php esc_html_e('Retake Quiz', 'tfp-dashboard'); ?></button>
                         <?php endif; ?>
