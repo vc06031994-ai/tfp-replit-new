@@ -4,10 +4,19 @@
     document.addEventListener('DOMContentLoaded', function () {
         if (typeof tfpWeekSettings === 'undefined') return;
 
+        // Locked next-step buttons can become unlocked dynamically (for example
+        // immediately after Homework submission). Do not permanently block the
+        // click handler based on the state that existed on initial page load.
         document.querySelectorAll('.tfp-dash-btn.is-disabled[aria-disabled="true"]').forEach(function (button) {
             button.addEventListener('click', function (event) {
-                event.preventDefault();
-                event.stopPropagation();
+                var isStillDisabled =
+                    button.getAttribute('aria-disabled') === 'true' ||
+                    button.classList.contains('is-disabled');
+
+                if (isStillDisabled) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
             });
         });
 
