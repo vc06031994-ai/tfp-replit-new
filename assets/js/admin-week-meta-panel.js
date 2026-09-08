@@ -34,6 +34,9 @@
         { key: 'tfp_week_meeting_date', label: __('Meeting Date', 'tfp-dashboard'), placeholder: 'e.g. June 12, 2026' },
         { key: 'tfp_week_meeting_time', label: __('Meeting Time', 'tfp-dashboard'), placeholder: 'e.g. 6:00 PM PT' },
         { key: 'tfp_week_facilitator_name', label: __('Facilitator Name', 'tfp-dashboard'), placeholder: 'e.g. Chris Soloc' },
+        { key: 'tfp_week_meeting_discord_url', label: __('Discord / Meeting URL', 'tfp-dashboard'), placeholder: 'https://...' },
+        { key: 'tfp_week_meeting_exercise_title', label: __('Exercise Title', 'tfp-dashboard'), placeholder: 'e.g. Exercise #2 – Flesh vs. Holy Spirit' },
+        { key: 'tfp_week_meeting_exercise_format', label: __('Exercise Format', 'tfp-dashboard'), placeholder: 'e.g. Group/Individual • Seated • Journaling' },
     ];
 
     /* ------------------------------------------------------------------ *
