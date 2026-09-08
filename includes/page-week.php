@@ -163,7 +163,7 @@ function tfp_dashboard_render_week_video_tab($week, $progress)
     </div>
 
     <div class="tfp-week__video-footer">
-        <a href="?lesson_id=<?php echo esc_attr($week->ID); ?>&tab=reading" class="tfp-dash-btn tfp-dash-btn--primary tfp-week__video-next-btn" <?php echo !$is_complete ? 'style="opacity:0.45; pointer-events:none;" disabled' : ''; ?>><?php esc_html_e('Continue to Reading', 'tfp-dashboard'); ?> <svg xmlns="http://www.w3.org/2000/svg" width="12" height="10" viewBox="0 0 12 10" fill="none">
+        <a href="?lesson_id=<?php echo esc_attr($week->ID); ?>&tab=reading" class="tfp-dash-btn tfp-dash-btn--primary tfp-week__video-next-btn<?php echo $is_complete ? '' : ' is-disabled'; ?>" aria-disabled="<?php echo $is_complete ? 'false' : 'true'; ?>"<?php echo $is_complete ? '' : ' tabindex="-1"'; ?>><?php esc_html_e('Continue to Reading', 'tfp-dashboard'); ?> <svg xmlns="http://www.w3.org/2000/svg" width="12" height="10" viewBox="0 0 12 10" fill="none">
             <path d="M1 5H11M7 9L11 5L7 1" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg></a>
     </div>
@@ -311,7 +311,7 @@ function tfp_dashboard_render_week_reading_tab($week, $progress)
         </div>
         
         <div class="tfp-week__homework-footer-right">
-            <a href="?lesson_id=<?php echo $week->ID; ?>&tab=homework" class="tfp-dash-btn tfp-dash-btn--primary tfp-reading-go-homework" style="<?php echo $all_completed ? 'display:inline-flex;' : 'display:none;'; ?>"><?php esc_html_e('Continue to Homework', 'tfp-dashboard'); ?> <svg xmlns="http://www.w3.org/2000/svg" width="12" height="10" viewBox="0 0 12 10" fill="none" style="margin-left:8px;"><path d="M1 5H11M7 9L11 5L7 1" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+            <a href="?lesson_id=<?php echo $week->ID; ?>&tab=homework" class="tfp-dash-btn tfp-dash-btn--primary tfp-reading-go-homework<?php echo $all_completed ? '' : ' is-disabled'; ?>" aria-disabled="<?php echo $all_completed ? 'false' : 'true'; ?>"<?php echo $all_completed ? '' : ' tabindex="-1"'; ?>><?php esc_html_e('Continue to Homework', 'tfp-dashboard'); ?> <svg xmlns="http://www.w3.org/2000/svg" width="12" height="10" viewBox="0 0 12 10" fill="none" style="margin-left:8px;"><path d="M1 5H11M7 9L11 5L7 1" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
         </div>
     </div>
     <?php
