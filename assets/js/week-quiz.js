@@ -151,6 +151,13 @@
             btn.addEventListener('click', function () { showReview(activeReviewIndex + 1); });
         });
 
+        // --- Review → Result -----------------------------------------------
+        quizWrap.querySelectorAll('.tfp-quiz-review-result-btn').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                switchState('state-result');
+            });
+        });
+
         // --- Retake Quiz (direct) ------------------------------------------
         quizWrap.querySelectorAll('.tfp-quiz-retake-btn').forEach(function (btn) {
             btn.addEventListener('click', function () {
