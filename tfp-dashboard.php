@@ -76,6 +76,9 @@ require_once TFP_DASH_PATH . 'includes/week/homework-ajax.php';
 require_once TFP_DASH_PATH . 'includes/week/quiz-helpers.php';
 require_once TFP_DASH_PATH . 'includes/week/quiz-ajax.php';
 require_once TFP_DASH_PATH . 'includes/week/quiz-render.php';
+require_once TFP_DASH_PATH . 'includes/week/test-helpers.php';
+require_once TFP_DASH_PATH . 'includes/week/test-ajax.php';
+require_once TFP_DASH_PATH . 'includes/week/test-render.php';
 require_once TFP_DASH_PATH . 'includes/page-week.php';
 require_once TFP_DASH_PATH . 'includes/program/helpers.php';
 require_once TFP_DASH_PATH . 'includes/grades/helpers.php';
@@ -263,6 +266,8 @@ add_action('wp_enqueue_scripts', function () {
         wp_enqueue_script('tfp-dashboard-week', TFP_DASH_URL . 'assets/js/week.js', [], TFP_DASH_VERSION, true);
         wp_enqueue_script('tfp-dashboard-week-homework', TFP_DASH_URL . 'assets/js/week-homework.js', ['tfp-dashboard-week'], TFP_DASH_VERSION, true);
         wp_enqueue_script('tfp-dashboard-week-quiz', TFP_DASH_URL . 'assets/js/week-quiz.js', ['tfp-dashboard-week'], TFP_DASH_VERSION, true);
+        wp_enqueue_style('tfp-dashboard-week-test', TFP_DASH_URL . 'assets/css/week-test.css', ['tfp-dashboard-week-quiz'], TFP_DASH_VERSION);
+        wp_enqueue_script('tfp-dashboard-week-test', TFP_DASH_URL . 'assets/js/week-test.js', ['tfp-dashboard-week'], TFP_DASH_VERSION, true);
         wp_localize_script('tfp-dashboard-week', 'tfpWeekSettings', [
             'ajaxUrl'        => admin_url('admin-ajax.php'),
             'nonce'          => wp_create_nonce('tfp_week_nonce'),
