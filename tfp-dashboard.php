@@ -79,6 +79,7 @@ require_once TFP_DASH_PATH . 'includes/week/quiz-render.php';
 require_once TFP_DASH_PATH . 'includes/week/test-helpers.php';
 require_once TFP_DASH_PATH . 'includes/week/test-ajax.php';
 require_once TFP_DASH_PATH . 'includes/week/test-render.php';
+require_once TFP_DASH_PATH . 'includes/week/meeting-render.php';
 require_once TFP_DASH_PATH . 'includes/page-week.php';
 require_once TFP_DASH_PATH . 'includes/program/helpers.php';
 require_once TFP_DASH_PATH . 'includes/grades/helpers.php';
