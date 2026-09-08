@@ -126,11 +126,9 @@ add_action('wp_ajax_tfp_week_submit_quiz', function () {
     update_user_meta($user_id, 'tfp_week_quiz_result_' . $lesson_id, $grade);
     update_user_meta($user_id, 'tfp_week_quiz_attempts_' . $lesson_id, $grade['attempt']);
 
-    // A passing quiz, or the final allowed attempt, completes the gated
-    // `quiz` step so the Test tab unlocks in either outcome.
-    if (!empty($grade['passed']) || (int) $grade['attempt'] >= tfp_week_get_quiz_max_attempts($lesson_id)) {
-        tfp_ld_mark_step_complete($user_id, $lesson_id, 'quiz');
-    }
+    // Any submitted quiz completes the gated `quiz` step so the Test tab
+    // unlocks whether the student passed or failed.
+    tfp_ld_mark_step_complete($user_id, $lesson_id, 'quiz');
 
     wp_send_json([
         'success'         => true,
