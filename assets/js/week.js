@@ -4,6 +4,13 @@
     document.addEventListener('DOMContentLoaded', function () {
         if (typeof tfpWeekSettings === 'undefined') return;
 
+        document.querySelectorAll('.tfp-dash-btn.is-disabled[aria-disabled="true"]').forEach(function (button) {
+            button.addEventListener('click', function (event) {
+                event.preventDefault();
+                event.stopPropagation();
+            });
+        });
+
         var video = document.querySelector('[data-tfp-week-video]');
         var markedComplete = false;
 
