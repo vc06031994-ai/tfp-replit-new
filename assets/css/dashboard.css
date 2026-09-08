@@ -471,6 +471,22 @@ p {
     line-height: 130%;
 }
 
+.tfp-dash-btn-small{
+     display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    padding: 5px 20px !important;
+    border-radius: 8px !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    text-decoration: none;
+    cursor: pointer;
+    border: 1px solid transparent;
+    font-family: var(--tfp-dash-font) !important;
+    line-height: 100%; padding: 8px 20px !important;
+    font-size: 14px !important;
+}
 
 
 .tfp-dash-btn--primary {

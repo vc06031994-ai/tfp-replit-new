@@ -26,18 +26,19 @@ function tfp_dashboard_render_week_meeting_experience($week)
     <div class="tfp-week__meeting-layout">
         <aside class="tfp-week__meeting-sidebar">
             <div class="tfp-week__meeting-progress-card">
-                <h4><?php esc_html_e('Weekly Progress','tfp-dashboard'); ?></h4>
+                <h5><?php esc_html_e('Weekly Progress','tfp-dashboard'); ?></h5>
                 <?php foreach (['reading'=>'Reading','homework'=>'Homework','test'=>'Tests'] as $step=>$label) : $done=!empty($progress[$step]); ?>
                     <div class="tfp-week__meeting-progress-row">
                         <div class="tfp-week__meeting-progress-top"><strong><?php echo esc_html($label); ?></strong><span><?php echo $done ? esc_html__('Completed','tfp-dashboard') : esc_html__('Not Started','tfp-dashboard'); ?></span></div>
                         <div class="tfp-week__meeting-progress-bar"><span style="width:<?php echo $done?'100':'0'; ?>%"></span></div>
                     </div>
                 <?php endforeach; ?>
-                <h4 class="tfp-week__meeting-tasks-title"><?php esc_html_e('Meeting Tasks','tfp-dashboard'); ?></h4>
+                <h5 class="tfp-week__meeting-tasks-title"><?php esc_html_e('Meeting Tasks','tfp-dashboard'); ?></h5>
                 <?php foreach ($tasks as $key=>$task) : ?>
                     <div class="tfp-week__meeting-task">
-                        <div><strong><?php echo esc_html($task[0]); ?></strong><span class="tfp-week__meeting-status <?php echo $task[1]?'is-complete':''; ?>"><?php echo $task[1] ? esc_html__('Completed','tfp-dashboard') : esc_html__('Not Started','tfp-dashboard'); ?></span></div>
-                        <a class="tfp-dash-btn tfp-dash-btn--primary tfp-week__meeting-task-btn" href="<?php echo esc_url($url($key)); ?>"><?php echo esc_html($key==='attendance' && $task[1] ? 'Review' : 'Start'); ?></a>
+                        <div><strong><?php echo esc_html($task[0]); ?></strong></div>
+                        <span class="tfp-week__meeting-status <?php echo $task[1]?'is-complete':''; ?>"><?php echo $task[1] ? esc_html__('Completed','tfp-dashboard') : esc_html__('Not Started','tfp-dashboard'); ?></span>
+                        <a class="tfp-dash-btn-small tfp-dash-btn--primary" href="<?php echo esc_url($url($key)); ?>"><?php echo esc_html($key==='attendance' && $task[1] ? 'Review' : 'Start'); ?></a>
                     </div>
                 <?php endforeach; ?>
             </div>
@@ -59,12 +60,12 @@ function tfp_dashboard_render_week_meeting_experience($week)
                     $discord=$discord?:apply_filters('tfp_dashboard_discord_url','#');
                 ?>
                     <article class="tfp-week__meeting-attendance">
-                        <h3><?php esc_html_e('Weekly Meetings','tfp-dashboard'); ?></h3>
+                        <h5><?php esc_html_e('Weekly Meetings','tfp-dashboard'); ?></h5>
                         <div class="tfp-week__meeting-intro"><?php echo wp_kses_post(wpautop($description ?: __("Your weekly meeting is designed to help you grow through connection and conversation. Join your facilitator and group to discuss this week's topic, share insights, and ask questions. Attendance is required to unlock the next section of your discipleship journey.",'tfp-dashboard'))); ?></div>
                         <div class="tfp-week__meeting-details">
-                            <p><strong><?php esc_html_e('Facilitator:','tfp-dashboard'); ?></strong> <?php echo esc_html($facilitator?:'—'); ?></p>
-                            <p><strong><?php esc_html_e('Date:','tfp-dashboard'); ?></strong> <?php echo esc_html($date?:'—'); ?></p>
-                            <p><strong><?php esc_html_e('Time:','tfp-dashboard'); ?></strong> <?php echo esc_html($time?:'—'); ?></p>
+                            <h6><span><?php esc_html_e('Facilitator:','tfp-dashboard'); ?></span> <?php echo esc_html($facilitator?:'—'); ?></p>
+                            <h6><span><?php esc_html_e('Date:','tfp-dashboard'); ?></span> <?php echo esc_html($date?:'—'); ?></p>
+                            <h6><span><?php esc_html_e('Time:','tfp-dashboard'); ?></span> <?php echo esc_html($time?:'—'); ?></p>
                         </div>
                         <a href="<?php echo esc_url($discord); ?>" target="_blank" rel="noopener" class="tfp-dash-btn tfp-dash-btn--primary tfp-week__meeting-join"><?php esc_html_e('Join Discord for Class','tfp-dashboard'); ?></a>
                     </article>

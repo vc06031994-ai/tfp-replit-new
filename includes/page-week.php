@@ -442,7 +442,7 @@ function tfp_dashboard_render_week_homework_tab($week, $user_id)
                 <div class="tfp-week__homework-desc">
                     <p><?php esc_html_e("You've answered all the questions for this section. Review your responses if needed, then submit your homework for review to unlock the next step.", 'tfp-dashboard'); ?></p>
                 </div>
-                <div class="tfp-week__homework-actions" style="margin-top: 24px; display: flex; gap: 16px;">
+                <div class="tfp-week__homework-actions" style="margin-top: 24px; display: flex; gap: 16px; flex-wrap:wrap;">
                     <button class="tfp-dash-btn tfp-dash-btn--primary tfp-homework-review-btn"><?php esc_html_e('Review Answers', 'tfp-dashboard'); ?></button>
                     <button class="tfp-dash-btn tfp-reded-btn tfp-homework-submit-btn"><?php esc_html_e('Submit Homework for Review', 'tfp-dashboard'); ?></button>
                 </div>
