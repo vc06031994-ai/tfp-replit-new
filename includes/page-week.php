@@ -126,6 +126,9 @@ function tfp_dashboard_render_week_content()
                 case 'quiz':
                     tfp_dashboard_render_week_quiz_tab($week, get_current_user_id());
                     break;
+                case 'test':
+                    tfp_dashboard_render_week_test_tab($week, get_current_user_id());
+                    break;
                 default:
                     tfp_dashboard_render_week_placeholder_tab($active, $labels[$active]);
                     break;
@@ -187,7 +190,7 @@ function tfp_dashboard_render_week_meeting_tab($week)
 }
 
 /**
- * Reading / Homework / Quiz / Test tabs are built in a follow-up session.
+ * Reading, Homework, Quiz and Test tabs are implemented in their respective modules.
  * Once unlocked, this placeholder marks that the step is coming soon
  * rather than showing a broken empty tab.
  */
