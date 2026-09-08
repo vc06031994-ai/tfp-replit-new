@@ -172,21 +172,12 @@ function tfp_dashboard_render_week_video_tab($week, $progress)
 
 function tfp_dashboard_render_week_meeting_tab($week)
 {
-    $date       = get_post_meta($week->ID, 'tfp_week_meeting_date', true);
-    $time       = get_post_meta($week->ID, 'tfp_week_meeting_time', true);
-    $facilitator = get_post_meta($week->ID, 'tfp_week_facilitator_name', true);
-    $discord_url = apply_filters('tfp_dashboard_discord_url', '#');
-    ?>
-    <div class="tfp-week__meeting">
-        <div class="tfp-profile-row"><span><?php esc_html_e('Date', 'tfp-dashboard'); ?></span><strong><?php echo esc_html($date ?: '—'); ?></strong></div>
-        <div class="tfp-profile-row"><span><?php esc_html_e('Time', 'tfp-dashboard'); ?></span><strong><?php echo esc_html($time ?: '—'); ?></strong></div>
-        <div class="tfp-profile-row"><span><?php esc_html_e('Facilitator', 'tfp-dashboard'); ?></span><strong><?php echo esc_html($facilitator ?: '—'); ?></strong></div>
+    if (function_exists('tfp_dashboard_render_week_meeting_experience')) {
+        tfp_dashboard_render_week_meeting_experience($week);
+        return;
+    }
 
-        <a href="<?php echo esc_url($discord_url); ?>" target="_blank" rel="noopener" class="tfp-dash-btn tfp-dash-btn--primary tfp-week__meeting-cta">
-            <?php esc_html_e('Join Discord', 'tfp-dashboard'); ?>
-        </a>
-    </div>
-    <?php
+    echo '<div class="tfp-week__placeholder"><p>' . esc_html__('Meeting experience is loading.', 'tfp-dashboard') . '</p></div>';
 }
 
 /**
