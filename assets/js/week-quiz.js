@@ -75,7 +75,7 @@
                 .then(onDone)
                 .catch(function (err) {
                     console.error(err);
-                    alert(tfpWeekSettings.networkError || 'A network error occurred.');
+                    onDone({ success: false, message: tfpWeekSettings.networkError || 'A network error occurred.' });
                 });
         }
 
