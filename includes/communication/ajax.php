@@ -21,6 +21,7 @@ function tfp_chat_format_message_row($row)
         'ticket_id'   => (int) $row->ticket_id,
         'sender_id'   => (int) $row->sender_id,
         'sender_name' => $sender ? $sender->display_name : __('Unknown', 'tfp-dashboard'),
+        'avatar_url'  => get_avatar_url((int) $row->sender_id, ['size' => 76]),
         'is_mine'     => (int) $row->sender_id === get_current_user_id(),
         'is_staff'    => tfp_dashboard_user_is_staff($row->sender_id),
         'message'     => wp_kses_post($row->message),
