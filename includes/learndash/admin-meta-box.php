@@ -175,37 +175,67 @@ add_action('init', function () {
     ]);
 }, 20);
 
+/**
+ * Load the custom Week editor panels in the Gutenberg document sidebar.
+ *
+ * Keep this check deliberately tolerant: LearnDash/Gutenberg can initialize
+ * the editor before get_current_screen() is fully populated, so relying only
+ * on one screen property can silently prevent all custom panels from loading.
+ * The post type is resolved from the screen first, then the editor request.
+ *
+ * File modification timestamps are used as versions so restoring/redeploying
+ * the plugin cannot leave the browser using stale admin JavaScript.
+ */
 add_action('enqueue_block_editor_assets', function () {
-    $screen = function_exists('get_current_screen') ? get_current_screen() : null;
+    $post_type = '';
 
-    if (!$screen || $screen->post_type !== 'sfwd-lessons') {
+    if (function_exists('get_current_screen')) {
+        $screen = get_current_screen();
+        if ($screen && !empty($screen->post_type)) {
+            $post_type = (string) $screen->post_type;
+        }
+    }
+
+    if ($post_type === '' && isset($_GET['post_type'])) {
+        $post_type = sanitize_key(wp_unslash($_GET['post_type']));
+    }
+
+    if ($post_type === '' && isset($_GET['post'])) {
+        $post_type = get_post_type(absint($_GET['post']));
+    }
+
+    if ($post_type !== 'sfwd-lessons') {
         return;
     }
+
+    $deps = ['wp-plugins', 'wp-edit-post', 'wp-components', 'wp-data', 'wp-element', 'wp-i18n', 'wp-compose'];
+
+    $meta_js = TFP_DASH_PATH . 'assets/js/admin-week-meta-panel.js';
+    $quiz_js = TFP_DASH_PATH . 'assets/js/admin-week-quiz-panel.js';
+    $test_js = TFP_DASH_PATH . 'assets/js/admin-week-test-panel.js';
+    $panel_css = TFP_DASH_PATH . 'assets/css/admin-week-meta-panel.css';
 
     wp_enqueue_script(
         'tfp-week-meta-panel',
         TFP_DASH_URL . 'assets/js/admin-week-meta-panel.js',
-        ['wp-plugins', 'wp-edit-post', 'wp-components', 'wp-data', 'wp-element', 'wp-i18n', 'wp-compose'],
-        TFP_DASH_VERSION,
+        $deps,
+        file_exists($meta_js) ? (string) filemtime($meta_js) : TFP_DASH_VERSION,
         true
     );
 
-    // Quiz editor panel (multiple-choice questions + pass percentage).
-    // Reuses the homework panel's CSS classes (tfp-hw-*) so no extra admin
-    // stylesheet is needed.
     wp_enqueue_script(
         'tfp-week-quiz-panel',
         TFP_DASH_URL . 'assets/js/admin-week-quiz-panel.js',
-        ['wp-plugins', 'wp-edit-post', 'wp-components', 'wp-data', 'wp-element', 'wp-i18n', 'wp-compose'],
-        TFP_DASH_VERSION,
+        $deps,
+        file_exists($quiz_js) ? (string) filemtime($quiz_js) : TFP_DASH_VERSION,
         true
     );
 
     wp_enqueue_script(
         'tfp-week-test-panel',
         TFP_DASH_URL . 'assets/js/admin-week-test-panel.js',
-        ['wp-plugins', 'wp-edit-post', 'wp-components', 'wp-data', 'wp-element', 'wp-i18n', 'wp-compose'],
-        TFP_DASH_VERSION,
+        $deps,
+        file_exists($test_js) ? (string) filemtime($test_js) : TFP_DASH_VERSION,
         true
     );
 
@@ -213,6 +243,6 @@ add_action('enqueue_block_editor_assets', function () {
         'tfp-week-meta-panel-css',
         TFP_DASH_URL . 'assets/css/admin-week-meta-panel.css',
         [],
-        TFP_DASH_VERSION
+        file_exists($panel_css) ? (string) filemtime($panel_css) : TFP_DASH_VERSION
     );
-});
+}, 100);
