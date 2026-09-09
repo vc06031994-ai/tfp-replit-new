@@ -2,9 +2,8 @@
     'use strict';
 
     var S = window.tfpDashboardBilling || {};
-    var initialized = false;
 
-    function ready(fn) {
+    function onReady(fn) {
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', fn, { once: true });
         } else {
@@ -12,93 +11,82 @@
         }
     }
 
-    ready(function () {
+    onReady(function () {
         var form = document.querySelector('[data-tfp-billing-form]');
-        var mount = document.querySelector('[data-tfp-stripe-card]');
+        var numberMount = document.querySelector('[data-tfp-stripe-card-number]');
+        var expiryMount = document.querySelector('[data-tfp-stripe-card-expiry]');
+        var cvcMount = document.querySelector('[data-tfp-stripe-card-cvc]');
 
-        if (!form || !mount || initialized) {
-            return;
-        }
+        if (!form || !numberMount || !expiryMount || !cvcMount) return;
 
         var status = form.querySelector('[data-tfp-billing-status]');
         var submit = form.querySelector('[data-tfp-billing-submit]');
+        var nameInput = form.querySelector('[data-tfp-cardholder-name]');
+        var consent = form.querySelector('[data-tfp-billing-consent]');
+        var attempts = 0;
+        var started = false;
 
         function setStatus(message, state) {
             if (!status) return;
             status.textContent = message || '';
-            if (state) {
-                status.setAttribute('data-state', state);
-            } else {
-                status.removeAttribute('data-state');
+            if (state) status.setAttribute('data-state', state);
+            else status.removeAttribute('data-state');
+        }
+
+        function init() {
+            if (started) return;
+
+            if (!S.publishableKey) {
+                setStatus('Secure card setup is unavailable because the Stripe publishable key is missing.', 'error');
+                return;
             }
-        }
-
-        if (!S.publishableKey) {
-            setStatus('Secure card setup is unavailable because the Stripe publishable key is missing.', 'error');
-            return;
-        }
-
-        // Stripe.js normally loads before this file through the WordPress
-        // dependency. A short retry also protects against optimisation plugins
-        // that rewrite/defer external scripts and can otherwise leave Elements
-        // mounted as an empty box.
-        var attempts = 0;
-
-        function initialiseStripe() {
-            if (initialized) return;
 
             if (typeof window.Stripe !== 'function') {
                 attempts++;
-                if (attempts < 50) {
-                    window.setTimeout(initialiseStripe, 100);
-                    return;
-                }
+                if (attempts < 50) return window.setTimeout(init, 100);
                 setStatus('Secure card fields could not load. Please refresh and try again.', 'error');
                 return;
             }
 
+            started = true;
+
             var stripe;
             var elements;
-            var card;
+            var cardNumber;
+            var cardExpiry;
+            var cardCvc;
+
+            var elementStyle = {
+                base: {
+                    color: '#22272B',
+                    fontFamily: 'Arial, sans-serif',
+                    fontSize: '16px',
+                    lineHeight: '24px',
+                    '::placeholder': { color: '#9A9A9A' }
+                },
+                invalid: { color: '#B3261E' }
+            };
 
             try {
                 stripe = window.Stripe(S.publishableKey);
                 elements = stripe.elements();
-                card = elements.create('card', {
-                    style: {
-                        base: {
-                            color: '#151411',
-                            fontFamily: 'Arial, sans-serif',
-                            fontSize: '16px',
-                            lineHeight: '24px',
-                            '::placeholder': {
-                                color: '#777777'
-                            }
-                        },
-                        invalid: {
-                            color: '#B3261E'
-                        }
-                    },
-                    hidePostalCode: true
-                });
+                cardNumber = elements.create('cardNumber', { style: elementStyle, placeholder: '1234 1234 1234 1234' });
+                cardExpiry = elements.create('cardExpiry', { style: elementStyle, placeholder: 'MM / YY' });
+                cardCvc = elements.create('cardCvc', { style: elementStyle, placeholder: 'CVC' });
 
-                card.mount(mount);
-                initialized = true;
-            } catch (error) {
-                setStatus(error && error.message ? error.message : 'Secure card fields could not be initialized.', 'error');
+                cardNumber.mount(numberMount);
+                cardExpiry.mount(expiryMount);
+                cardCvc.mount(cvcMount);
+            } catch (e) {
+                setStatus(e && e.message ? e.message : 'Secure card fields could not be initialized.', 'error');
                 return;
             }
 
-            card.on('ready', function () {
-                setStatus('');
-            });
-
-            card.on('change', function (event) {
-                if (event && event.error) {
-                    setStatus(event.error.message, 'error');
-                } else {
-                    setStatus('');
-                }
+            [cardNumber, cardExpiry, cardCvc].forEach(function (element) {
+                element.on('change', function (event) {
+                    if (event && event.error) setStatus(event.error.message, 'error');
+                    else setStatus('');
+                });
             });
 
             function post(action, data) {
@@ -115,19 +103,8 @@
                     credentials: 'same-origin',
                     body: body
                 }).then(function (response) {
-                    return response.text().then(function (text) {
-                        var payload;
-                        try {
-                            payload = JSON.parse(text);
-                        } catch (e) {
-                            throw new Error('The server returned an invalid response. Please refresh and try again.');
-                        }
-
-                        if (!response.ok && (!payload || !payload.message)) {
-                            throw new Error('Could not complete the payment request.');
-                        }
-
-                        return payload;
+                    return response.json().catch(function () {
+                        throw new Error('The server returned an invalid response. Please refresh and try again.');
                     });
                 });
             }
@@ -135,14 +112,23 @@
             form.addEventListener('submit', function (event) {
                 event.preventDefault();
 
-                if (submit && submit.disabled) {
+                if (submit && submit.disabled) return;
+
+                var cardholderName = nameInput ? nameInput.value.trim() : '';
+
+                if (!cardholderName) {
+                    setStatus('Please enter the name shown on the card.', 'error');
+                    if (nameInput) nameInput.focus();
                     return;
                 }
 
-                if (submit) {
-                    submit.disabled = true;
+                if (consent && !consent.checked) {
+                    setStatus('Please confirm that you authorize the payment before continuing.', 'error');
+                    consent.focus();
+                    return;
                 }
 
+                if (submit) submit.disabled = true;
                 setStatus('Preparing secure card update...');
 
                 post('tfp_stripe_create_setup_intent', {})
@@ -153,15 +139,13 @@
 
                         return stripe.confirmCardSetup(response.clientSecret, {
                             payment_method: {
-                                card: card
+                                card: cardNumber,
+                                billing_details: { name: cardholderName }
                             }
                         });
                     })
                     .then(function (result) {
-                        if (result.error) {
-                            throw new Error(result.error.message || 'Could not verify this card.');
-                        }
-
+                        if (result.error) throw new Error(result.error.message || 'Could not verify this card.');
                         if (!result.setupIntent || result.setupIntent.status !== 'succeeded') {
                             throw new Error('Card setup was not completed.');
                         }
@@ -182,36 +166,25 @@
                         var noCard = document.querySelector('[data-tfp-no-card]');
 
                         if (response.card) {
-                            if (brand) {
-                                brand.textContent = response.card.brand + ' ending in ' + response.card.last4;
-                            }
-                            if (expiry) {
-                                expiry.textContent = response.card.expiry;
-                            }
-                            if (noCard) {
-                                noCard.textContent = response.card.brand + ' ending in ' + response.card.last4;
-                            }
+                            if (brand) brand.textContent = response.card.brand + ' ending in ' + response.card.last4;
+                            if (expiry) expiry.textContent = response.card.expiry;
+                            if (noCard) noCard.textContent = response.card.brand + ' ending in ' + response.card.last4;
                         }
 
-                        card.clear();
-                        setStatus(response.message || 'Payment method updated successfully.', 'success');
+                        cardNumber.clear();
+                        cardExpiry.clear();
+                        cardCvc.clear();
+                        setStatus(response.message || 'Payment method saved successfully.', 'success');
                     })
                     .catch(function (error) {
-                        setStatus(
-                            error && error.message
-                                ? error.message
-                                : 'A secure payment error occurred. Please try again.',
-                            'error'
-                        );
+                        setStatus(error && error.message ? error.message : 'A secure payment error occurred. Please try again.', 'error');
                     })
                     .finally(function () {
-                        if (submit) {
-                            submit.disabled = false;
-                        }
+                        if (submit) submit.disabled = false;
                     });
             });
         }
 
-        initialiseStripe();
+        init();
     });
 })();
