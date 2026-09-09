@@ -457,6 +457,178 @@ function tfp_stripe_ajax_complete_order()
 }
 
 /* -------------------------------------------------------------------------
+ * Dashboard billing: save/update a card without leaving the discipleship UI
+ * ---------------------------------------------------------------------- */
+
+function tfp_stripe_get_or_create_customer($user_id)
+{
+    $user = get_userdata($user_id);
+    if (!$user) {
+        return new WP_Error('tfp_stripe_user_missing', __('Could not find your account.', 'tfp-dashboard'));
+    }
+
+    $customer_id = (string) get_user_meta($user_id, '_tfp_stripe_customer_id', true);
+    if ($customer_id !== '') {
+        $existing = tfp_stripe_api('GET', 'customers/' . rawurlencode($customer_id));
+        if (!is_wp_error($existing) && !empty($existing['id']) && empty($existing['deleted'])) {
+            return $existing;
+        }
+    }
+
+    $customer = tfp_stripe_api('POST', 'customers', array(
+        'email' => $user->user_email,
+        'name'  => trim($user->first_name . ' ' . $user->last_name) ?: $user->display_name,
+        'metadata' => array(
+            'wp_user_id' => (string) $user_id,
+            'source'     => 'tfp_dashboard_billing',
+        ),
+    ));
+
+    if (!is_wp_error($customer) && !empty($customer['id'])) {
+        update_user_meta($user_id, '_tfp_stripe_customer_id', sanitize_text_field($customer['id']));
+    }
+
+    return $customer;
+}
+
+function tfp_stripe_billing_verify_request()
+{
+    if (!is_user_logged_in()) {
+        wp_send_json(array('success' => false, 'message' => __('Please sign in again.', 'tfp-dashboard')), 403);
+    }
+
+    $nonce = isset($_POST['nonce']) ? sanitize_text_field(wp_unslash($_POST['nonce'])) : '';
+    if (!$nonce || !wp_verify_nonce($nonce, 'tfp_billing_nonce')) {
+        wp_send_json(array('success' => false, 'message' => __('Your session expired. Please refresh and try again.', 'tfp-dashboard')), 403);
+    }
+}
+
+add_action('wp_ajax_tfp_stripe_create_setup_intent', 'tfp_stripe_ajax_create_setup_intent');
+
+function tfp_stripe_ajax_create_setup_intent()
+{
+    tfp_stripe_billing_verify_request();
+
+    if (!tfp_stripe_is_configured()) {
+        wp_send_json(array('success' => false, 'message' => __('Secure card updates are not configured yet.', 'tfp-dashboard')), 400);
+    }
+
+    $user_id = get_current_user_id();
+    $customer = tfp_stripe_get_or_create_customer($user_id);
+    if (is_wp_error($customer) || empty($customer['id'])) {
+        $message = is_wp_error($customer) ? $customer->get_error_message() : __('Could not prepare secure card setup.', 'tfp-dashboard');
+        wp_send_json(array('success' => false, 'message' => $message), 400);
+    }
+
+    $intent = tfp_stripe_api('POST', 'setup_intents', array(
+        'customer' => $customer['id'],
+        'usage'    => 'off_session',
+        'payment_method_types' => array('card'),
+        'metadata' => array(
+            'wp_user_id' => (string) $user_id,
+            'source'     => 'tfp_dashboard_billing',
+        ),
+    ));
+
+    if (is_wp_error($intent) || empty($intent['client_secret'])) {
+        $message = is_wp_error($intent) ? $intent->get_error_message() : __('Could not start secure card setup.', 'tfp-dashboard');
+        wp_send_json(array('success' => false, 'message' => $message), 400);
+    }
+
+    wp_send_json(array(
+        'success'      => true,
+        'clientSecret' => $intent['client_secret'],
+        'setupIntent'  => $intent['id'],
+    ));
+}
+
+add_action('wp_ajax_tfp_stripe_save_setup_intent', 'tfp_stripe_ajax_save_setup_intent');
+
+function tfp_stripe_ajax_save_setup_intent()
+{
+    tfp_stripe_billing_verify_request();
+
+    $setup_intent_id = isset($_POST['setup_intent_id']) ? sanitize_text_field(wp_unslash($_POST['setup_intent_id'])) : '';
+    if ($setup_intent_id === '') {
+        wp_send_json(array('success' => false, 'message' => __('Missing secure payment reference.', 'tfp-dashboard')), 400);
+    }
+
+    $intent = tfp_stripe_api('GET', 'setup_intents/' . rawurlencode($setup_intent_id));
+    if (is_wp_error($intent) || empty($intent['id'])) {
+        $message = is_wp_error($intent) ? $intent->get_error_message() : __('Could not verify your card.', 'tfp-dashboard');
+        wp_send_json(array('success' => false, 'message' => $message), 400);
+    }
+
+    $user_id = get_current_user_id();
+    $customer_id = (string) get_user_meta($user_id, '_tfp_stripe_customer_id', true);
+
+    if (($intent['status'] ?? '') !== 'succeeded' || empty($intent['payment_method'])) {
+        wp_send_json(array('success' => false, 'message' => __('Your card setup was not completed.', 'tfp-dashboard')), 400);
+    }
+
+    if ($customer_id === '' || ($intent['customer'] ?? '') !== $customer_id) {
+        wp_send_json(array('success' => false, 'message' => __('This payment method does not belong to your account.', 'tfp-dashboard')), 403);
+    }
+
+    if (!class_exists('WC_Payment_Token_CC')) {
+        wp_send_json(array('success' => false, 'message' => __('Payment storage is not available.', 'tfp-dashboard')), 500);
+    }
+
+    $payment_method_id = is_array($intent['payment_method'])
+        ? ($intent['payment_method']['id'] ?? '')
+        : (string) $intent['payment_method'];
+
+    $payment_method = tfp_stripe_api('GET', 'payment_methods/' . rawurlencode($payment_method_id));
+    if (is_wp_error($payment_method) || empty($payment_method['card'])) {
+        $message = is_wp_error($payment_method) ? $payment_method->get_error_message() : __('Could not read your card details.', 'tfp-dashboard');
+        wp_send_json(array('success' => false, 'message' => $message), 400);
+    }
+
+    $card = $payment_method['card'];
+    $token = new WC_Payment_Token_CC();
+    $token->set_gateway_id('tfp_stripe');
+    $token->set_token(sanitize_text_field($payment_method_id));
+    $token->set_user_id($user_id);
+    $token->set_card_type(sanitize_text_field($card['brand'] ?? 'card'));
+    $token->set_last4(sanitize_text_field($card['last4'] ?? ''));
+    $token->set_expiry_month((string) ($card['exp_month'] ?? ''));
+    $token->set_expiry_year((string) ($card['exp_year'] ?? ''));
+    $token->set_default(true);
+
+    $token_id = $token->save();
+    if (!$token_id) {
+        wp_send_json(array('success' => false, 'message' => __('Could not save your payment method.', 'tfp-dashboard')), 500);
+    }
+
+    // Replace prior cards created by this dashboard only. Store payment methods
+    // from other WooCommerce gateways remain untouched.
+    if (class_exists('WC_Payment_Tokens')) {
+        $tokens = WC_Payment_Tokens::get_customer_tokens($user_id);
+        foreach ($tokens as $existing) {
+            if (
+                $existing->get_id() !== $token->get_id() &&
+                method_exists($existing, 'get_gateway_id') &&
+                $existing->get_gateway_id() === 'tfp_stripe'
+            ) {
+                $existing->delete();
+            }
+        }
+    }
+
+    update_user_meta($user_id, '_tfp_saved_payment_method', $payment_method_id);
+
+    wp_send_json(array(
+        'success' => true,
+        'message' => __('Payment method updated successfully.', 'tfp-dashboard'),
+        'card'    => array(
+            'brand'  => ucfirst((string) ($card['brand'] ?? __('Card', 'tfp-dashboard'))),
+            'last4'  => (string) ($card['last4'] ?? ''),
+            'expiry' => sprintf('%02d / %s', (int) ($card['exp_month'] ?? 0), (string) ($card['exp_year'] ?? '')),
+        ),
+    ));
+}
+
+/* -------------------------------------------------------------------------
  * Admin settings page (Settings -> TFP Stripe)
  * ---------------------------------------------------------------------- */
 
