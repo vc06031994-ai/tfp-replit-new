@@ -298,17 +298,108 @@ function tfp_billing_get_default_card_summary($user_id = null)
         $token = !empty($tokens) ? reset($tokens) : null;
     }
 
-    if (!$token || !method_exists($token, 'get_type') || 'CC' !== $token->get_type()) {
+    if ($token && method_exists($token, 'get_type') && 'CC' === $token->get_type()) {
+        return [
+            'brand'  => method_exists($token, 'get_card_type') ? ucfirst($token->get_card_type()) : __('Card', 'tfp-dashboard'),
+            'last4'  => method_exists($token, 'get_last4') ? $token->get_last4() : '',
+            'expiry' => method_exists($token, 'get_expiry_month') && method_exists($token, 'get_expiry_year')
+                ? sprintf('%02d / %s', (int) $token->get_expiry_month(), $token->get_expiry_year())
+                : '',
+        ];
+    }
+
+    return tfp_billing_get_saved_card_summary_meta($user_id);
+}
+
+
+/**
+ * Persist a safe display-only card summary. This never stores a full card
+ * number or CVC; only brand, last four digits and expiry are kept.
+ */
+function tfp_billing_store_card_summary($user_id, $card)
+{
+    $user_id = (int) $user_id;
+    if (!$user_id || !is_array($card)) {
+        return;
+    }
+
+    $summary = array(
+        'brand'  => sanitize_text_field((string) ($card['brand'] ?? 'Card')),
+        'last4'  => preg_replace('/[^0-9]/', '', (string) ($card['last4'] ?? '')),
+        'expiry' => '',
+    );
+
+    $month = isset($card['exp_month']) ? (int) $card['exp_month'] : 0;
+    $year  = isset($card['exp_year']) ? (string) $card['exp_year'] : '';
+
+    if ($month && $year !== '') {
+        $summary['expiry'] = sprintf('%02d / %s', $month, $year);
+    }
+
+    if ($summary['last4'] === '') {
+        return;
+    }
+
+    update_user_meta($user_id, '_tfp_saved_card_summary', $summary);
+}
+
+/**
+ * Safe fallback for cards used during enrollment. The custom Stripe checkout
+ * does not necessarily create a reusable WooCommerce token, so resolve the
+ * card from the successful Stripe PaymentIntent and cache only its display
+ * summary for the Profile/Billing screens.
+ */
+function tfp_billing_get_saved_card_summary_meta($user_id)
+{
+    $summary = get_user_meta($user_id, '_tfp_saved_card_summary', true);
+    if (is_array($summary) && !empty($summary['last4'])) {
+        return array(
+            'brand'  => !empty($summary['brand']) ? ucfirst((string) $summary['brand']) : __('Card', 'tfp-dashboard'),
+            'last4'  => (string) $summary['last4'],
+            'expiry' => (string) ($summary['expiry'] ?? ''),
+        );
+    }
+
+    if (!function_exists('tfp_billing_get_program_order') || !function_exists('tfp_stripe_api')) {
         return null;
     }
 
-    return [
-        'brand'  => method_exists($token, 'get_card_type') ? ucfirst($token->get_card_type()) : __('Card', 'tfp-dashboard'),
-        'last4'  => method_exists($token, 'get_last4') ? $token->get_last4() : '',
-        'expiry' => method_exists($token, 'get_expiry_month') && method_exists($token, 'get_expiry_year')
-            ? sprintf('%02d / %s', (int) $token->get_expiry_month(), $token->get_expiry_year())
-            : '',
-    ];
+    $order = tfp_billing_get_program_order($user_id);
+    if (!$order || !method_exists($order, 'get_meta')) {
+        return null;
+    }
+
+    $intent_id = (string) $order->get_meta('_tfp_stripe_intent_id', true);
+    if ($intent_id === '') {
+        return null;
+    }
+
+    $intent = tfp_stripe_api('GET', 'payment_intents/' . rawurlencode($intent_id));
+    if (is_wp_error($intent) || empty($intent['payment_method'])) {
+        return null;
+    }
+
+    $payment_method_id = is_array($intent['payment_method'])
+        ? (string) ($intent['payment_method']['id'] ?? '')
+        : (string) $intent['payment_method'];
+
+    if ($payment_method_id === '') {
+        return null;
+    }
+
+    $payment_method = tfp_stripe_api('GET', 'payment_methods/' . rawurlencode($payment_method_id));
+    if (is_wp_error($payment_method) || empty($payment_method['card'])) {
+        return null;
+    }
+
+    $card = $payment_method['card'];
+    tfp_billing_store_card_summary($user_id, $card);
+
+    return array(
+        'brand'  => ucfirst((string) ($card['brand'] ?? __('Card', 'tfp-dashboard'))),
+        'last4'  => (string) ($card['last4'] ?? ''),
+        'expiry' => sprintf('%02d / %s', (int) ($card['exp_month'] ?? 0), (string) ($card['exp_year'] ?? '')),
+    );
 }
 
 
