@@ -751,3 +751,33 @@ fieldset>.tfp-dash-form__radio {
     color: #B3261E;
     margin-top: -4px;
 }
+
+/* Embedded Stripe payment editor — keeps card management inside Discipleship. */
+.tfp-dash-billing-secure-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.tfp-stripe-card-element {
+    min-height: 48px;
+    padding: 14px 16px;
+    border: 1px solid rgba(42, 53, 62, .16);
+    border-radius: 10px;
+    background: #fff;
+    display: flex;
+    align-items: center;
+}
+
+.tfp-stripe-card-element.StripeElement--focus {
+    border-color: var(--tfp-dash-teal);
+    box-shadow: 0 0 0 3px rgba(0, 102, 110, .10);
+}
+
+.tfp-stripe-card-element.StripeElement--invalid {
+    border-color: #B3261E;
+}
+
+.tfp-dash-billing-secure-form .tfp-dash-form__status {
+    margin: 0;
+}
