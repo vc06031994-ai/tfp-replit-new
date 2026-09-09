@@ -138,6 +138,35 @@ function tfp_dashboard_get_program_state($user_id = null)
     return $state;
 }
 
+/**
+ * Whether the current user has fully unlocked the student dashboard.
+ *
+ * Registration alone intentionally does not unlock the class navigation.
+ * A student must have a confirmed program payment and cohort enrollment
+ * (the derived program state is "enrolled"). Staff users keep full access
+ * so administrators/facilitators can test and manage the dashboard without
+ * purchasing the program.
+ */
+function tfp_dashboard_user_has_full_access($user_id = null)
+{
+    $user_id = $user_id ?: get_current_user_id();
+
+    if (!$user_id) {
+        return false;
+    }
+
+    if (function_exists('tfp_dashboard_user_is_staff') && tfp_dashboard_user_is_staff($user_id)) {
+        return true;
+    }
+
+    if (function_exists('tfp_dashboard_get_program_state')) {
+        $state = tfp_dashboard_get_program_state($user_id);
+        return !empty($state['status']) && $state['status'] === 'enrolled';
+    }
+
+    return function_exists('tfp_billing_user_has_paid') && tfp_billing_user_has_paid($user_id);
+}
+
 function tfp_dashboard_avatar($size = 40)
 {
     $user_id = get_current_user_id();
