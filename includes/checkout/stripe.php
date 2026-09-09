@@ -354,6 +354,22 @@ function tfp_stripe_ajax_complete_order()
         wp_send_json(array('success' => false, 'message' => __('Payment was not completed.', 'tfp-dashboard')), 400);
     }
 
+    // Cache a safe card summary for the Discipleship Profile. The custom
+    // checkout does not expose/store a reusable card token, so only brand,
+    // last four digits and expiry are persisted for display.
+    if (get_current_user_id() && !empty($pi['payment_method']) && function_exists('tfp_billing_store_card_summary')) {
+        $pm_id = is_array($pi['payment_method'])
+            ? (string) ($pi['payment_method']['id'] ?? '')
+            : (string) $pi['payment_method'];
+
+        if ($pm_id !== '') {
+            $pm = tfp_stripe_api('GET', 'payment_methods/' . rawurlencode($pm_id));
+            if (!is_wp_error($pm) && !empty($pm['card'])) {
+                tfp_billing_store_card_summary(get_current_user_id(), $pm['card']);
+            }
+        }
+    }
+
     if (WC()->cart->is_empty()) {
         wp_send_json(array('success' => false, 'message' => __('Your cart is empty.', 'tfp-dashboard')), 400);
     }
@@ -616,6 +632,10 @@ function tfp_stripe_ajax_save_setup_intent()
     }
 
     update_user_meta($user_id, '_tfp_saved_payment_method', $payment_method_id);
+
+    if (function_exists('tfp_billing_store_card_summary')) {
+        tfp_billing_store_card_summary($user_id, $card);
+    }
 
     wp_send_json(array(
         'success' => true,
