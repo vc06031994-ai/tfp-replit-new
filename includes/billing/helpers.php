@@ -287,8 +287,12 @@ function tfp_billing_get_default_card_summary($user_id = null)
 {
     $user_id = $user_id ?: get_current_user_id();
 
-    if (!$user_id || !class_exists('WC_Payment_Tokens')) {
+    if (!$user_id) {
         return null;
+    }
+
+    if (!class_exists('WC_Payment_Tokens')) {
+        return tfp_billing_get_saved_card_summary_meta($user_id);
     }
 
     $token = WC_Payment_Tokens::get_customer_default_token($user_id);
