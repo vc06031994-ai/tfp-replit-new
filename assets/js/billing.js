@@ -58,13 +58,16 @@
 
             var elementStyle = {
                 base: {
-                    color: '#22272B',
-                    fontFamily: 'Arial, sans-serif',
-                    fontSize: '16px',
+                    color: '#1F2933',
+                    fontFamily: 'Arial, Helvetica, sans-serif',
+                    fontSize: '17px',
+                    fontSmoothing: 'antialiased',
                     lineHeight: '24px',
-                    '::placeholder': { color: '#9A9A9A' }
+                    '::placeholder': {
+                        color: '#8A9299'
+                    }
                 },
-                invalid: { color: '#B3261E' }
+                invalid: { color: '#B3261E', iconColor: '#B3261E' }
             };
 
             try {
@@ -77,6 +80,13 @@
                 cardNumber.mount(numberMount);
                 cardExpiry.mount(expiryMount);
                 cardCvc.mount(cvcMount);
+
+                [cardNumber, cardExpiry, cardCvc].forEach(function (element) {
+                    element.on('ready', function () {
+                        var host = element === cardNumber ? numberMount : (element === cardExpiry ? expiryMount : cvcMount);
+                        host.setAttribute('data-tfp-stripe-ready', '1');
+                    });
+                });
             } catch (e) {
                 setStatus(e && e.message ? e.message : 'Secure card fields could not be initialized.', 'error');
                 return;
