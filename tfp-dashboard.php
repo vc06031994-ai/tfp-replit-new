@@ -9,7 +9,7 @@
 
 if (!defined('ABSPATH')) exit;
 
-define('TFP_DASH_VERSION', '1.2.1');
+define('TFP_DASH_VERSION', '1.2.3');
 define('TFP_DASH_PATH', plugin_dir_path(__FILE__));
 define('TFP_DASH_URL', plugin_dir_url(__FILE__));
 
@@ -246,7 +246,11 @@ add_action('wp_enqueue_scripts', function () {
 
     if ($template === 'tfp-dashboard-payment-details' && function_exists('tfp_stripe_is_configured') && tfp_stripe_is_configured()) {
         wp_enqueue_script('stripe-js', 'https://js.stripe.com/v3/', [], null, true);
-        wp_enqueue_script('tfp-dashboard-billing', TFP_DASH_URL . 'assets/js/billing.js', ['stripe-js'], TFP_DASH_VERSION, true);
+        // Use the file modification time when available so a stale page/plugin
+        // cache cannot keep serving an older billing.js after deployment.
+        $billing_script_path = TFP_DASH_PATH . 'assets/js/billing.js';
+        $billing_script_ver  = file_exists($billing_script_path) ? (string) filemtime($billing_script_path) : TFP_DASH_VERSION;
+        wp_enqueue_script('tfp-dashboard-billing', TFP_DASH_URL . 'assets/js/billing.js', ['stripe-js'], $billing_script_ver, true);
         wp_localize_script('tfp-dashboard-billing', 'tfpDashboardBilling', [
             'ajaxUrl'        => admin_url('admin-ajax.php'),
             'nonce'          => wp_create_nonce('tfp_billing_nonce'),
