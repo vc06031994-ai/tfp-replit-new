@@ -134,4 +134,30 @@ function tfp_dashboard_require_login()
         wp_safe_redirect(home_url('/'));
         exit;
     }
+
+    // During registration/payment setup, students should only be able to use
+    // Home/Profile-related dashboard pages. Program/class features stay hidden
+    // and cannot be opened directly until enrollment is fully confirmed.
+    $restricted_templates = [
+        'tfp-dashboard-program',
+        'tfp-dashboard-week',
+        'tfp-dashboard-grades',
+        'tfp-dashboard-communication',
+        'tfp-dashboard-documents',
+        'tfp-dashboard-calendar',
+    ];
+
+    $current_template = tfp_dashboard_current_template_slug();
+    if (
+        in_array($current_template, $restricted_templates, true) &&
+        function_exists('tfp_dashboard_user_has_full_access') &&
+        !tfp_dashboard_user_has_full_access()
+    ) {
+        $home_url = function_exists('tfp_dashboard_get_url')
+            ? tfp_dashboard_get_url('tfp-dashboard-home')
+            : home_url('/');
+
+        wp_safe_redirect($home_url ?: home_url('/'));
+        exit;
+    }
 }
