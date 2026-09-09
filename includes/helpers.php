@@ -33,7 +33,7 @@ function tfp_dashboard_user_role_label()
     // billing. That is an e-commerce implementation detail and should never
     // be surfaced inside the discipleship experience.
     if ($user_id && function_exists('tfp_dashboard_user_is_staff') && !tfp_dashboard_user_is_staff($user_id)) {
-        return __('Student', 'tfp-dashboard');
+        return __('Disciple', 'tfp-dashboard');
     }
 
     if (function_exists('tfp_get_current_user_role_label')) {
