@@ -330,16 +330,23 @@ function tfp_billing_get_billing_email($user_id = null)
     return $user ? $user->user_email : '';
 }
 /**
- * Grades / Communication / Calendar unlock automatically once payment
- * is confirmed (matches the two Figma sidebar variants).
+ * Registration/payment dashboard navigation.
+ * Until the student is fully enrolled, the client wants only Home and Profile
+ * visible. Program, Grades, Communication, Documents and Calendar unlock
+ * together after the program payment + cohort enrollment is confirmed.
  */
 add_filter('tfp_dashboard_nav_items', function ($items) {
     $user_id = get_current_user_id();
-    if (!$user_id || tfp_billing_user_has_paid($user_id)) {
+
+    $has_full_access = function_exists('tfp_dashboard_user_has_full_access')
+        ? tfp_dashboard_user_has_full_access($user_id)
+        : ($user_id && tfp_billing_user_has_paid($user_id));
+
+    if ($has_full_access) {
         return $items;
     }
 
-    $allowed = ['home', 'documents', 'profile'];
+    $allowed = ['home', 'profile'];
     return array_values(array_filter($items, function ($item) use ($allowed) {
         return in_array($item['id'], $allowed, true);
     }));
