@@ -27,9 +27,19 @@ function tfp_dashboard_user_first_name()
 
 function tfp_dashboard_user_role_label()
 {
+    $user_id = get_current_user_id();
+
+    // WooCommerce may internally assign the "customer" role for orders and
+    // billing. That is an e-commerce implementation detail and should never
+    // be surfaced inside the discipleship experience.
+    if ($user_id && function_exists('tfp_dashboard_user_is_staff') && !tfp_dashboard_user_is_staff($user_id)) {
+        return __('Student', 'tfp-dashboard');
+    }
+
     if (function_exists('tfp_get_current_user_role_label')) {
         return tfp_get_current_user_role_label();
     }
+
     $user = wp_get_current_user();
     return $user && !empty($user->roles) ? ucfirst($user->roles[0]) : '';
 }
