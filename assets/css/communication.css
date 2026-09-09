@@ -581,3 +581,98 @@
         padding: 12px;
     }
 }
+
+
+/* -------------------------------------------------------------------------
+   Communication theme overrides
+   Prevent the active WordPress theme accent color from overriding the
+   Discipleship communication controls.
+   ------------------------------------------------------------------------- */
+
+.tfp-dash-chatlayout button.tfp-dash-btn,
+.tfp-dash-chatlayout .tfp-dash-ticketlist__item,
+.tfp-dash-modal button.tfp-dash-btn {
+    -webkit-appearance: none !important;
+    appearance: none !important;
+    text-decoration: none !important;
+}
+
+.tfp-dash-chatlayout button.tfp-dash-btn--primary,
+.tfp-dash-modal button.tfp-dash-btn--primary {
+    background-color: var(--tfp-dash-teal) !important;
+    color: #ffffff !important;
+    border-color: var(--tfp-dash-teal) !important;
+}
+
+.tfp-dash-chatlayout button.tfp-dash-btn--primary:hover,
+.tfp-dash-chatlayout button.tfp-dash-btn--primary:focus,
+.tfp-dash-modal button.tfp-dash-btn--primary:hover,
+.tfp-dash-modal button.tfp-dash-btn--primary:focus {
+    background-color: var(--tfp-dash-teal) !important;
+    color: #ffffff !important;
+    border-color: var(--tfp-dash-teal) !important;
+    box-shadow: none !important;
+}
+
+.tfp-dash-chatlayout button.tfp-dash-btn--outline,
+.tfp-dash-modal button.tfp-dash-btn--outline {
+    background-color: #ffffff !important;
+    color: var(--tfp-dash-text) !important;
+    border-color: var(--tfp-dash-border) !important;
+}
+
+.tfp-dash-chatlayout button.tfp-dash-btn--outline:hover,
+.tfp-dash-chatlayout button.tfp-dash-btn--outline:focus,
+.tfp-dash-modal button.tfp-dash-btn--outline:hover,
+.tfp-dash-modal button.tfp-dash-btn--outline:focus {
+    background-color: var(--tfp-dash-bg-soft) !important;
+    color: var(--tfp-dash-text) !important;
+    border-color: var(--tfp-dash-teal) !important;
+    box-shadow: none !important;
+}
+
+.tfp-dash-ticketlist__item,
+.tfp-dash-ticketlist__item:hover,
+.tfp-dash-ticketlist__item:focus,
+.tfp-dash-ticketlist__item:focus-visible {
+    outline: none !important;
+    box-shadow: none !important;
+    border-left-color: transparent !important;
+    border-right-color: transparent !important;
+}
+
+.tfp-dash-ticketlist__item.is-active,
+.tfp-dash-ticketlist__item.is-active:hover,
+.tfp-dash-ticketlist__item.is-active:focus {
+    background: rgba(0, 102, 110, .055) !important;
+    box-shadow: inset 3px 0 0 var(--tfp-dash-teal) !important;
+    border-top-color: var(--tfp-dash-border) !important;
+    border-bottom-color: var(--tfp-dash-border) !important;
+}
+
+.tfp-dash-ticketlist__tabs button,
+.tfp-dash-ticketlist__tabs button:hover,
+.tfp-dash-ticketlist__tabs button:focus {
+    color: var(--tfp-dash-muted) !important;
+    background-color: #eef0f1 !important;
+    border-color: var(--tfp-dash-border) !important;
+    box-shadow: none !important;
+    outline: none !important;
+}
+
+.tfp-dash-ticketlist__tabs button.is-active,
+.tfp-dash-ticketlist__tabs button.is-active:hover,
+.tfp-dash-ticketlist__tabs button.is-active:focus {
+    background-color: var(--tfp-dash-teal) !important;
+    color: #ffffff !important;
+    border-color: var(--tfp-dash-teal) !important;
+}
+
+.tfp-dash-modal__box input:focus,
+.tfp-dash-modal__box select:focus,
+.tfp-dash-modal__box textarea:focus,
+.tfp-dash-chatpanel__reply input:focus {
+    outline: none !important;
+    border-color: var(--tfp-dash-teal) !important;
+    box-shadow: 0 0 0 2px rgba(0, 102, 110, .08) !important;
+}
