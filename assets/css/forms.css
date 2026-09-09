@@ -781,3 +781,152 @@ fieldset>.tfp-dash-form__radio {
 .tfp-dash-billing-secure-form .tfp-dash-form__status {
     margin: 0;
 }
+
+
+/* Payment Details — Figma-aligned Stripe editor */
+.tfp-dash-billing-detail {
+    padding: 32px;
+    background: #EBEBEB;
+    border-radius: 14px;
+}
+
+.tfp-dash-billing-detail__grid {
+    grid-template-columns: 280px minmax(0, 1fr);
+    gap: 28px;
+    align-items: start;
+}
+
+.tfp-dash-billing-detail__card-preview {
+    padding-top: 0;
+}
+
+.tfp-dash-billing-card-visual {
+    width: 100%;
+    max-width: 280px;
+    border-radius: 24px;
+    box-shadow: none;
+}
+
+.tfp-dash-billing-detail__form {
+    gap: 16px;
+}
+
+.tfp-dash-billing-saved-card,
+.tfp-dash-billing-no-card {
+    margin: 0 0 2px;
+}
+
+.tfp-dash-billing-saved-card {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.tfp-dash-billing-saved-card span {
+    font-size: 13px;
+    color: var(--tfp-dash-muted);
+}
+
+.tfp-dash-billing-saved-card strong {
+    font-size: 15px;
+}
+
+.tfp-dash-billing-saved-card small {
+    font-size: 13px;
+    color: var(--tfp-dash-muted);
+}
+
+.tfp-dash-billing-secure-form {
+    gap: 14px;
+}
+
+.tfp-dash-billing-secure-form > label:not(.tfp-dash-billing-consent) {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    font-family: var(--tfp-dash-font-alt);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--tfp-dash-text);
+}
+
+.tfp-stripe-card-element {
+    min-height: 44px;
+    padding: 11px 14px;
+    border: 1px solid #B8BDC1;
+    border-radius: 12px;
+    background: #F9F9F9;
+    box-sizing: border-box;
+}
+
+.tfp-stripe-card-element.StripeElement--focus {
+    border-color: var(--tfp-dash-teal);
+    box-shadow: 0 0 0 2px rgba(0, 102, 110, .12);
+}
+
+.tfp-billing-name-input {
+    width: 100%;
+    min-height: 44px;
+    padding: 11px 14px;
+    border: 1px solid #B8BDC1;
+    border-radius: 12px;
+    background: #F9F9F9;
+    box-sizing: border-box;
+    font: inherit;
+    color: var(--tfp-dash-text);
+}
+
+.tfp-billing-name-input:focus {
+    outline: none;
+    border-color: var(--tfp-dash-teal);
+    box-shadow: 0 0 0 2px rgba(0, 102, 110, .12);
+}
+
+.tfp-dash-billing-consent {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: flex-start !important;
+    gap: 10px !important;
+    margin-top: 2px;
+    font-family: var(--tfp-dash-font-alt) !important;
+    font-size: 10px !important;
+    font-weight: 600 !important;
+    line-height: 1.4 !important;
+    color: var(--tfp-dash-teal) !important;
+}
+
+.tfp-dash-billing-consent input {
+    width: 17px;
+    height: 17px;
+    margin: 0;
+    accent-color: var(--tfp-dash-teal);
+    flex: 0 0 auto;
+}
+
+.tfp-dash-billing-secure-form .tfp-dash-btn {
+    width: 100%;
+    min-height: 44px;
+    justify-content: center;
+    margin-top: 2px;
+}
+
+@media (max-width: 900px) {
+    .tfp-dash-billing-detail__grid {
+        grid-template-columns: 1fr;
+    }
+
+    .tfp-dash-billing-card-visual {
+        max-width: 280px;
+    }
+}
+
+@media (max-width: 600px) {
+    .tfp-dash-billing-detail {
+        padding: 20px;
+    }
+
+    .tfp-dash-billing-detail__intro {
+        padding: 0;
+    }
+}
