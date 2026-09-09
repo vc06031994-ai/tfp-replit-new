@@ -244,6 +244,16 @@ add_action('wp_enqueue_scripts', function () {
         wp_enqueue_style('tfp-dashboard-forms', TFP_DASH_URL . 'assets/css/forms.css', ['tfp-dashboard-core'], TFP_DASH_VERSION);
     }
 
+    if ($template === 'tfp-dashboard-payment-details' && function_exists('tfp_stripe_is_configured') && tfp_stripe_is_configured()) {
+        wp_enqueue_script('stripe-js', 'https://js.stripe.com/v3/', [], null, true);
+        wp_enqueue_script('tfp-dashboard-billing', TFP_DASH_URL . 'assets/js/billing.js', ['stripe-js'], TFP_DASH_VERSION, true);
+        wp_localize_script('tfp-dashboard-billing', 'tfpDashboardBilling', [
+            'ajaxUrl'        => admin_url('admin-ajax.php'),
+            'nonce'          => wp_create_nonce('tfp_billing_nonce'),
+            'publishableKey' => tfp_stripe_get_publishable_key(),
+        ]);
+    }
+
     if ($template === 'tfp-dashboard-financial-aid') {
         wp_enqueue_script('tfp-dashboard-financial-aid', TFP_DASH_URL . 'assets/js/financial-aid.js', [], TFP_DASH_VERSION, true);
         wp_localize_script('tfp-dashboard-financial-aid', 'tfpFinancialAidSettings', [
