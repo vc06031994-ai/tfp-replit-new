@@ -872,7 +872,8 @@
     .tfp-week__homework-nav {
         flex-wrap: wrap;
     }
-    .tfp-week__homework-footer-left{
+
+    .tfp-week__homework-footer-left {
         padding-right: 0 !important;
     }
 }
@@ -913,12 +914,13 @@
     align-items: center;
 }
 
-.tfp-quiz-desc{
+.tfp-quiz-desc {
     font-size: 20px;
     font-weight: 600;
     line-height: 160%;
     font-family: var(--tfp-dash-font-mono);
 }
+
 /* Shared disabled Continue state across all Week tabs. */
 .tfp-dash-btn.is-disabled,
 .tfp-dash-btn[aria-disabled="true"] {
@@ -927,15 +929,320 @@
     pointer-events: auto;
 }
 
-.tfp-week__meeting-intro p{
+.tfp-week__meeting-intro p {
     font-family: var(--tfp-dash-font-mono) !important;
     font-size: 20px;
     line-height: 160%;
 }
 
-.tfp-week__meeting-subtabs a:hover{
-    color:#151411 !important;
+@media (max-width: 767px) {
+    .tfp-week__meeting-intro p {
+        font-size: 16px;
+    }
+}
+
+.tfp-week__meeting-subtabs a:hover {
+    color: #151411 !important;
 }
 
 /* Weekly Meeting experience */
-.tfp-week__meeting-layout{display:grid;grid-template-columns:460px minmax(0,1fr);gap:32px;margin-top:26px;align-items:start}.tfp-week__meeting-progress-card{border:1px solid var(--tfp-dash-border);border-radius:14px;padding:18px;background:#fff}.tfp-week__meeting-progress-card h4{margin:0 0 22px;font-size:18px}.tfp-week__meeting-progress-row{margin:0 0 20px}.tfp-week__meeting-progress-top{display:flex;justify-content:space-between;gap:12px;font-size:14px; line-height: 130%;}.tfp-week__meeting-task strong{font-size: 16px; line-height: 130%;}.tfp-week__meeting-progress-top span,.tfp-week__meeting-status{font-size:10px; font-weight: 500; line-height: 130%; padding:6px 14px;border:1px solid #00666E;border-radius:999px;background:#E1F4F2;white-space:nowrap}.tfp-week__meeting-progress-bar{height:5px;background:#e4e7e8;border-radius:10px;margin-top:10px;overflow:hidden}.tfp-week__meeting-progress-bar span{display:block;height:100%;background:var(--tfp-dash-teal)}.tfp-week__meeting-tasks-title{padding-top:10px;border-top:1px solid var(--tfp-dash-border)}/* Keep every Meeting Task label, status chip and action in fixed columns so all chips/buttons line up vertically. */.tfp-week__meeting-task{display:grid;grid-template-columns:minmax(0,1fr) 120px auto;align-items:center;column-gap:14px;padding:14px 0;border-bottom:1px solid var(--tfp-dash-border)}.tfp-week__meeting-task>div{display:flex;flex-direction:column;gap:7px;min-width:0}.tfp-week__meeting-task .tfp-week__meeting-status{justify-self:center}.tfp-week__meeting-task .tfp-dash-btn-small{justify-self:end}.tfp-week__meeting-content{border:1px solid var(--tfp-dash-border);border-radius:14px;overflow:hidden;background:#fff;min-height:680px}.tfp-week__meeting-subtabs{display:flex;border-bottom:1px solid var(--tfp-dash-border);padding:0 18px}.tfp-week__meeting-subtabs a{padding:17px 18px 5px;color:#C4C4C4;font-size:17px;font-weight:600;border-bottom:2px solid transparent}.tfp-week__meeting-subtabs a.is-active{color:var(--tfp-dash-text);border-bottom-color:var(--tfp-dash-teal)}.tfp-week__meeting-body{padding:30px 44px 42px}.tfp-week__meeting-body h3{margin:0 0 28px}.tfp-week__meeting-intro{max-width:620px;}.tfp-week__meeting-details{margin:34px 0 28px}.tfp-week__meeting-details p{margin:0 0 18px}.tfp-week__meeting-join{min-width:460px;text-align:center}.tfp-week__meeting-empty{color:var(--tfp-dash-muted)}.tfp-week__meeting-review{display:grid;grid-template-columns:72px minmax(0,1fr);gap:28px}.tfp-week__meeting-question-rail{display:flex;flex-direction:column;gap:20px;border-left:3px solid #e2e5e6;padding-left:14px}.tfp-week__meeting-question-rail a{font-weight:700;color:var(--tfp-dash-muted)}.tfp-week__meeting-question-rail a.is-active{color:var(--tfp-dash-text)}.tfp-week__meeting-review-main{max-width:650px}.tfp-week__meeting-answer-label{display:flex;align-items:center;gap:12px;margin:26px 0 10px;font-weight:700}.tfp-week__meeting-answer-label span{display:inline-flex;width:20px;height:20px;border-radius:50%;align-items:center;justify-content:center;background:var(--tfp-dash-teal);color:#fff}.tfp-week__meeting-answer-box,.tfp-week__meeting-explanation-box{border:1px solid var(--tfp-dash-border);padding:20px;line-height:1.7}.tfp-week__meeting-review-main h4{margin:22px 0 10px}.tfp-week__meeting-summary-card{max-width:380px;border:1px solid var(--tfp-dash-border);border-radius:14px;padding:18px}.tfp-week__meeting-summary-card p{display:grid;grid-template-columns:1fr 1fr;margin:0 0 16px}.tfp-week__meeting-your-answer{color:#6f2222}.tfp-week__meeting-correct-answer{color:var(--tfp-dash-teal)}.tfp-week__meeting-exercise{max-width:720px;line-height:1.7}.tfp-week__meeting-exercise h4,.tfp-week__meeting-notes h4{margin:26px 0 12px}.tfp-week__meeting-notes{max-width:720px}.tfp-week__meeting-performance p{margin:0 0 8px}.tfp-week__meeting-reflection{width:100%;border:1px solid var(--tfp-dash-border);padding:14px;resize:vertical}@media(max-width:1024px){.tfp-week__meeting-layout{grid-template-columns:1fr}.tfp-week__meeting-task-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 18px}}@media(max-width:700px){.tfp-week__meeting-body{padding:22px}.tfp-week__meeting-subtabs{overflow:auto;padding:0 8px}.tfp-week__meeting-subtabs a{font-size:14px;padding:14px 12px;white-space:nowrap}.tfp-week__meeting-task-list{grid-template-columns:1fr}.tfp-week__meeting-review{grid-template-columns:1fr}.tfp-week__meeting-question-rail{flex-direction:row;border-left:0;border-top:2px solid #e2e5e6;padding:10px 0}.tfp-week__meeting-join{min-width:0;width:100%}}
+.tfp-week__meeting-layout {
+    display: grid;
+    grid-template-columns: 460px minmax(0, 1fr);
+    gap: 32px;
+    margin-top: 26px;
+    align-items: start
+}
+
+.tfp-week__meeting-progress-card {
+    border: 1px solid var(--tfp-dash-border);
+    border-radius: 14px;
+    padding: 10px 20px 40px;
+    background: #fff
+}
+
+.tfp-week__meeting-progress-card h4 {
+    margin: 0 0 22px;
+    font-size: 18px
+}
+
+.tfp-week__meeting-progress-row {
+    margin: 0 0 20px
+}
+
+.tfp-week__meeting-progress-top {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    font-size: 14px;
+    line-height: 130%;
+}
+
+.tfp-week__meeting-task strong {
+    font-size: 16px;
+    line-height: 130%;
+}
+
+.tfp-week__meeting-progress-top span,
+.tfp-week__meeting-status {
+    font-size: 10px;
+    font-weight: 500;
+    line-height: 130%;
+    padding: 6px 14px;
+    border: 1px solid #00666E;
+    border-radius: 999px;
+    background: #E1F4F2;
+    white-space: nowrap
+}
+
+.tfp-week__meeting-progress-bar {
+    height: 5px;
+    background: #e4e7e8;
+    border-radius: 10px;
+    margin-top: 10px;
+    overflow: hidden
+}
+
+.tfp-week__meeting-progress-bar span {
+    display: block;
+    height: 100%;
+    background: var(--tfp-dash-teal)
+}
+
+.tfp-week__meeting-tasks-title {
+    padding-top: 10px;
+    border-top: 1px solid var(--tfp-dash-border)
+}
+
+/* Keep every Meeting Task label, status chip and action in fixed columns so all chips/buttons line up vertically. */
+.tfp-week__meeting-task {
+    display: grid;
+    grid-template-columns: minmax(0, 150px) 120px auto;
+    align-items: center;
+    column-gap: 14px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--tfp-dash-border)
+}
+
+.tfp-week__meeting-task>div {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    min-width: 0
+}
+
+.tfp-week__meeting-task .tfp-week__meeting-status {
+    justify-self: center
+}
+
+.tfp-week__meeting-task .tfp-dash-btn-small {
+    justify-self: end
+}
+
+.tfp-week__meeting-content {
+    border: 1px solid var(--tfp-dash-border);
+    border-radius: 14px;
+    overflow: hidden;
+    background: #fff;
+    min-height: 680px
+}
+
+.tfp-week__meeting-subtabs {
+    display: flex;
+    border-bottom: 1px solid var(--tfp-dash-border);
+    padding: 0 18px
+}
+
+.tfp-week__meeting-subtabs a {
+    padding: 17px 18px 5px;
+    color: #C4C4C4;
+    font-size: 17px;
+    font-weight: 600;
+    border-bottom: 2px solid transparent
+}
+
+.tfp-week__meeting-subtabs a.is-active {
+    color: var(--tfp-dash-text);
+    border-bottom-color: var(--tfp-dash-teal)
+}
+
+.tfp-week__meeting-body {
+    padding: 30px 44px 42px
+}
+
+.tfp-week__meeting-body h3 {
+    margin: 0 0 28px
+}
+
+.tfp-week__meeting-intro {
+    max-width: 620px;
+}
+
+.tfp-week__meeting-details {
+    margin: 34px 0 28px
+}
+
+.tfp-week__meeting-details p {
+    margin: 0 0 18px
+}
+
+.tfp-week__meeting-join {
+    min-width: 460px;
+    text-align: center
+}
+
+.tfp-week__meeting-empty {
+    color: var(--tfp-dash-muted)
+}
+
+.tfp-week__meeting-review {
+    display: grid;
+    grid-template-columns: 72px minmax(0, 1fr);
+    gap: 28px
+}
+
+.tfp-week__meeting-question-rail {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    border-left: 3px solid #e2e5e6;
+    padding-left: 14px
+}
+
+.tfp-week__meeting-question-rail a {
+    font-weight: 700;
+    color: var(--tfp-dash-muted)
+}
+
+.tfp-week__meeting-question-rail a.is-active {
+    color: var(--tfp-dash-text)
+}
+
+.tfp-week__meeting-review-main {
+    max-width: 650px
+}
+
+.tfp-week__meeting-answer-label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 26px 0 10px;
+    font-weight: 700
+}
+
+.tfp-week__meeting-answer-label span {
+    display: inline-flex;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    align-items: center;
+    justify-content: center;
+    background: var(--tfp-dash-teal);
+    color: #fff
+}
+
+.tfp-week__meeting-answer-box,
+.tfp-week__meeting-explanation-box {
+    border: 1px solid var(--tfp-dash-border);
+    padding: 20px;
+    line-height: 1.7
+}
+
+.tfp-week__meeting-review-main h4 {
+    margin: 22px 0 10px
+}
+
+.tfp-week__meeting-summary-card {
+    max-width: 380px;
+    border: 1px solid var(--tfp-dash-border);
+    border-radius: 14px;
+    padding: 18px
+}
+
+.tfp-week__meeting-summary-card p {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    margin: 0 0 16px
+}
+
+.tfp-week__meeting-your-answer {
+    color: #6f2222
+}
+
+.tfp-week__meeting-correct-answer {
+    color: var(--tfp-dash-teal)
+}
+
+.tfp-week__meeting-exercise {
+    max-width: 720px;
+    line-height: 1.7
+}
+
+.tfp-week__meeting-exercise h4,
+.tfp-week__meeting-notes h4 {
+    margin: 26px 0 12px
+}
+
+.tfp-week__meeting-notes {
+    max-width: 720px
+}
+
+.tfp-week__meeting-performance p {
+    margin: 0 0 8px
+}
+
+.tfp-week__meeting-reflection {
+    width: 100%;
+    border: 1px solid var(--tfp-dash-border);
+    padding: 14px;
+    resize: vertical
+}
+
+@media(max-width:1024px) {
+    .tfp-week__meeting-layout {
+        grid-template-columns: 1fr
+    }
+
+    .tfp-week__meeting-task-list {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0 18px
+    }
+}
+
+@media(max-width:700px) {
+    .tfp-week__meeting-body {
+        padding: 22px
+    }
+
+    .tfp-week__meeting-subtabs {
+        overflow: auto;
+        padding: 0 8px
+    }
+
+    .tfp-week__meeting-subtabs a {
+        font-size: 14px;
+        padding: 14px 12px;
+        white-space: nowrap
+    }
+
+    .tfp-week__meeting-task-list {
+        grid-template-columns: 1fr
+    }
+
+    .tfp-week__meeting-review {
+        grid-template-columns: 1fr
+    }
+
+    .tfp-week__meeting-question-rail {
+        flex-direction: row;
+        border-left: 0;
+        border-top: 2px solid #e2e5e6;
+        padding: 10px 0
+    }
+
+    .tfp-week__meeting-join {
+        min-width: 0;
+        width: 100%
+    }
+}
